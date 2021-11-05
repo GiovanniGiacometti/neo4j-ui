@@ -27,7 +27,7 @@ def get_graph():
     db = get_db()
     results = db.read_transaction(lambda tx: list(tx.run("MATCH (a:Person) "
                                                          "RETURN a.name as name, a.surname as surname, "
-                                                         "a.address as address, a.age as age, a.taxcode as taxcode LIMIT 16"
+                                                         "a.address as address, a.age as age, a.taxcode as taxcode"
                                                          )))
     nodes = []
     for record in results:
@@ -111,17 +111,19 @@ def get_vaccine():
     results = db.read_transaction(lambda tx: list(tx.run(
         '''
         match(n:Person{taxcode: $taxcode})-[r]->(v:VaccineCertificate) return v.id as id, v.type as type, 
-        v.first_dose_date as first_dose_date
+        v.first_dose_date as first_dose_date, v.second_dose_date as second_dose_date
         ''', taxcode = p
         )))
     nodes = []
 
-    for record in results:
+    for i,record in enumerate(results):
+        
+        nodes.append({"id": record["id"],
+        "type": record["type"],"first_dose_date": str(record["first_dose_date"])})
         try:
-            nodes.append({"id": record["id"],
-            "type": record["type"],"first_dose_date": str(record["first_dose_date"])})
+            nodes[i]["second_dose_date"] = str(record["second_dose_date"])
         except:
-            pass
+            print("No second dose")
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 

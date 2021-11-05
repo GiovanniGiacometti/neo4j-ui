@@ -16,9 +16,18 @@
             
             <div class="navbar-header col-sm-6 col-md-6">
                 <div class="navbar-brand">
-                    <p id="person"><a href="/homepage" >Neo4j ContactTracing </a></p>
+                    <p><a href="/homepage" >Neo4j ContactTracing </a></p>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+            
+    <div class="navbar-header col-sm-6 col-md-6">
+        <div class="navbar-brand">
+            <p id="person"><a href="/homepage" >Neo4j ContactTracing </a></p>
         </div>
     </div>
 </div>
@@ -126,11 +135,12 @@
                         const tbody = $("#tbodyvaccine").empty();
                             console.log(data.nodes)
                         data.nodes.forEach(function (vaccine){
+                        s = vaccine.second_dose_date=="None" ? "" : vaccine.second_dose_date
                         $("<tr id= '" + vaccine.id + "'><td class='movie' >" + vaccine.id
                             
                                 + "</td><td>" + vaccine.type
                                 + "</td><td>" + vaccine.first_dose_date
-                                + "</td><td>" + ""
+                                + "</td><td>" + s
                                 + "</td></tr>"
                         ).appendTo(tbody)
                 }, "json");
