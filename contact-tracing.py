@@ -46,6 +46,7 @@ def get_search():
 
     except Exception as e:
         print(e)
+        return list()
     else:
         db = get_db()
 
@@ -71,17 +72,14 @@ def get_search():
         return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
-
 @app.route("/covid-test")
 def get_covid_test():
     print("covid test called")
-
     try:
         p = request.args.get('taxcode')
-
-
     except Exception as e:
         print(e)
+        return list()
     print(p)
     db = get_db()
     results = db.read_transaction(lambda tx: list(tx.run(
