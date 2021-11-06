@@ -98,6 +98,9 @@ def get_covid_test():
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
+
+
+
 @app.route("/vaccine")
 def get_vaccine():
     print("vaccine called")
@@ -127,7 +130,6 @@ def get_vaccine():
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
-
 @app.route("/create-covid-test")
 def create_covid_test():
     try:
@@ -153,16 +155,86 @@ def create_covid_test():
 
         db.write_transaction(lambda tx: list(tx.run(
             '''
-                MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:TESTED]->(a:CovidTest {id:$id, type:$type, result:$result, date:$date})
-            ''', id=highest_id+1, type = d["type"], result=d["result"], date = d["date"],taxcode = d["taxcode"])))
+                MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:TESTED]->(a:CovidTest {id:$id, type:$type, result:$result, date:date($date)})
+            ''', 
+            id=highest_id+1, type = d["type"], result=d["result"], date = d["date"],taxcode = d["taxcode"])))
+        return {}
 
-        
+@app.route("/create-vaccine")
+def create_vaccine():
+    try:
+
+        d = {
+            "first_date":request.args.get('first_date'),
+            "second_date":request.args.get('second_date'),
+            "type":request.args.get('type'),
+            "taxcode": request.args.get("taxcode")
+        }
+
+        print(d)
+    except Exception as e:
+        print(e)
+    else:
+        db = get_db()
+        res = db.read_transaction(lambda tx: list(tx.run(
+            '''
+                match(n:VaccineCertificate) return n.id as id order by n.id DESC limit 1 
+            ''', )))
+        highest_id = int(res[0]["id"])
+
+        db.write_transaction(lambda tx: list(tx.run(
+            '''
+                MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:VACCINATED]->   
+                (a:VaccineCertificate {id:$id, type:$type, first_dose_date:date($first_date), second_dose_date:date($second_date)})
+            ''', 
+            id=highest_id+1, type = d["type"], first_date=d["first_date"], second_date = d["second_date"],taxcode = d["taxcode"])))
         return {}
 
 
+@app.route("/contacts")
+def get_contacts():
+    try:
+
+        d = {
+            "taxcode": request.args.get("taxcode")
+        }
+
+        print(d)
+    except Exception as e:
+        print(e)
+    else:
+        db = get_db()
+
+        result = db.write_transaction(lambda tx: list(tx.run(
+            '''
+                MATCH(n:Person{taxcode:$taxcode})-[r]-(p:Person)   
+                return type(r) as rel_type,properties(r) as rel_prop,p
+            ''', 
+            taxcode = d["taxcode"])))
+
+        relationships = []
+        for record in result:
+            rel = {}
+            rel["person_name"] = record["p"]["name"]
+            rel["person_surname"] = record["p"]["surname"]
+
+            type = record["rel_type"]
+            rel["rel_type"] = type
+
+            if type=="EVENT_CONTACT":
+                rel["place"] = record["rel_prop"]["place"]
+                rel["date"] = str(record["rel_prop"]["date"])
+            elif type=="APP_CONTACT":
+                rel["date"] = str(record["rel_prop"]["date"])
+            print(rel)
+            relationships.append(rel)
+
+            
+        return Response(dumps({"relationships": relationships}),
+                    mimetype="application/json")
 
 @app.route("/create")
-def create_node():
+def create_person():
     try:
 
         d = {

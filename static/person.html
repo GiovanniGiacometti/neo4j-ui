@@ -34,72 +34,35 @@
     </div>
 </div>
 
-<div class="col-sm-6 col-md-6">
-    <ul class="nav navbar-nav">
-        <li>
-            <form role="search" class="navbar-form" id="search">
-                <button class="btn btn-default"id="insertcovidtest_button" type="button">Insert Covid Test</button>
-                <button class="btn btn-default"id="insertvaccine_button" type="button">Insert Vaccine</button>
-            </form>
-        </li>
-    </ul>
-</div>
 
-<div id = "hiddendiv_covidtest" class="col-sm-6 col-md-6">
-    <ul class="nav navbar-nav">
-        <li>
-            <form role="search" class="navbar-form" id="search">
-                <div class="form-group">
-                    <input type="text" value="" placeholder="Date" class="form-control" id="date_input">
-                </div>
-                <div class="form-group">
-                    <input type="text" value="" placeholder="Type" class="form-control" id="type_input">
-                </div>
-                <div class="form-group">
-                    <input type="text" value="" placeholder="Result" class="form-control" id="result_input">
-                </div>
-                
-                <button class="btn btn-default"id="covid_sendtodb_button" type="button">Insert Covid Test</button>
-                
 
-            </form>
-        </li>
-    </ul>
-</div>
-
-<div id = "hiddendiv_vaccine" class="col-sm-6 col-md-6">
-    <ul class="nav navbar-nav">
-        <li>
-            <form role="search" class="navbar-form" id="search">
-                <div class="form-group">
-                    <input type="text" value="" placeholder="First Dose Date" class="form-control" id="first_date_input">
-                </div>
-                <div class="form-group">
-                    <input type="text" value="" placeholder="First Dose Date" class="form-control" id="second_date_input">
-                </div>
-                <div class="form-group">
-                    <input type="text" value="" placeholder="Type" class="form-control" id="type_input">
-                </div>
-                
-                <button class="btn btn-default"id="sendtodb_button" type="button">Insert Vaccine</button>
-            
-            </form>
-        </li>
-    </ul>
-</div>
-
-<div class="col-sm-6 col-md-6">
-    <ul class="nav navbar-nav">
-        <div class="navbar-header col-sm-6 col-md-6">
-            <div class="navbar-brand">
-                <div class="brand" id="person"></div>
-            </div>
-        </div>
-    </ul>
-</div>
-
-<div class="row">
+<div class="row row_internal">
     <h3>COVID TEST</h3>
+    <div class="col-sm-6 col-md-6">
+        <ul class="nav navbar-nav">
+            <li>
+                <form role="search" class="navbar-form" id="search">
+                    <button class="btn btn-default"id="insertcovidtest_button" type="button">Insert Covid Test</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    
+    <div id = "hiddendiv_covidtest" class="col-sm-6 col-md-6">
+        <form role="search" class="navbar-form" id="search">
+            <div class="form-group">
+                <input type="text" value="" placeholder="Date (yyyy-mm-dd)" class="form-control" id="date_input">
+            </div>
+            <div class="form-group">
+                <input type="text" value="" placeholder="Type" class="form-control" id="type_input">
+            </div>
+            <div class="form-group">
+                <input type="text" value="" placeholder="Result" class="form-control" id="result_input">
+            </div>
+            
+            <button class="btn btn-default"id="covid_sendtodb_button" type="button">Insert Covid Test</button>
+        </form>
+    </div>
 
     <div class="col-md-7">
 
@@ -124,8 +87,34 @@
             </div>
         </div>
     </div>
+    
 
+    
     <h3>VACCINE</h3>
+    <div class="col-sm-6 col-md-6">
+        <ul class="nav navbar-nav">
+            <li>
+                <form role="search" class="navbar-form" id="search">
+                    <button class="btn btn-default"id="insertvaccine_button" type="button">Insert Vaccine</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div id = "hiddendiv_vaccine" class="col-sm-6 col-md-6">
+        <form role="search" class="navbar-form" id="search">
+            <div class="form-group">
+                <input type="text" value="" placeholder="First Dose Date (yyyy-mm-dd)" class="form-control" id="first_date_input">
+            </div>
+            <div class="form-group">
+                <input type="text" value="" placeholder="Second Dose Date (yyyy-mm-dd)" class="form-control" id="second_date_input">
+            </div>
+            <div class="form-group">
+                <input type="text" value="" placeholder="Type" class="form-control" id="type_vaccine_input">
+            </div>
+            
+            <button class="btn btn-default"id="vaccine_sendtodb_button" type="button">Insert Vaccine</button>
+        </form>
+    </div>
     <div class="col-md-7">
 
         <div class="panel panel-default">
@@ -148,12 +137,44 @@
                 </div>
             </div>
         </div>
+        
+
+        <h3>CONTACTS</h3>
+
+    <div class="col-md-7">
+
+        <div class="panel panel-default">
+
+            <div class="row">
+                <div class="col-md-8 col-sm-8">
+                    
+                    <table id="results" class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>SURNAME</th>
+                            <th>RELATIONSHIP TYPE</th>
+                            <th>DATE</th>
+                            <th>PLACE</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbodycontacts">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     </div>
 </div>
 <style type="text/css">
     a {padding:5px}
     .row{
         padding:10px
+    }
+    .row_internal{
+        margin:10px
     }
 </style>
 </body>
@@ -170,7 +191,9 @@
         $("#hiddendiv_vaccine").hide()
         $("#hiddendiv_covidtest").hide()
         
-        
+        $("#vaccine_sendtodb_button").on("click", function(){
+                createVaccine()
+            });
         $("#covid_sendtodb_button").on("click", function(){
                 createCovidTest()
             });
@@ -190,7 +213,7 @@
                     function (data) {
                         const tbody = $("#tbodytest").empty();
                         data.nodes.forEach(function ( covidTest){
-                        $("<tr id= '" + covidTest.id + "'><td class='movie' >" + covidTest.id
+                        $("<tr id= '" + covidTest.id + "'><td>" + covidTest.id
                                 + "</td><td>" + covidTest.date
                                 + "</td><td>" + covidTest.type
                                 + "</td><td>" + covidTest.result
@@ -205,11 +228,29 @@
                         const tbody = $("#tbodyvaccine").empty();
                         data.nodes.forEach(function (vaccine){
                         s = vaccine.second_dose_date=="None" ? "" : vaccine.second_dose_date
-                        $("<tr id= '" + vaccine.id + "'><td class='movie' >" + vaccine.id
-                            
-                                + "</td><td>" + vaccine.type
-                                + "</td><td>" + vaccine.first_dose_date
-                                + "</td><td>" + s
+                        $("<tr id= '" + vaccine.id + "'><td>" + vaccine.id
+                            + "</td><td>" + vaccine.type
+                            + "</td><td>" + vaccine.first_dose_date
+                            + "</td><td>" + s
+                            + "</td></tr>"
+                        ).appendTo(tbody)
+                }, "json");
+        })}
+
+        function showContacts(taxcode) {
+            $.get("/contacts?taxcode=" + encodeURIComponent(taxcode),
+                    function (data) {
+                        const tbody = $("#tbodycontacts").empty();
+                        data.relationships.forEach(function ( rel, i){
+                        date = rel.hasOwnProperty("date") ? rel.date : "" 
+                        place = rel.hasOwnProperty("place") ? rel.place : ""
+
+                        $("<tr id= '" + rel.taxcode + "'><td>" 
+                                              + rel.person_name
+                                + "</td><td>" + rel.person_surname
+                                + "</td><td>" + rel.rel_type
+                                + "</td><td>" + date 
+                                + "</td><td>" + place
                                 + "</td></tr>"
                         ).appendTo(tbody)
                 }, "json");
@@ -227,10 +268,32 @@
                         $("#type_input").val()
                         $("#result_input").val()
                         showTests(params["taxcode"])
-                    })}
+                    })
+        }
+        
+        function createVaccine(){
+            const first_dose_date = $("#first_date_input").val()
+            const second_dose_date = $("#second_date_input").val()
+            const type = $("#type_vaccine_input").val()
+            
+            $.get("/create-vaccine?first_date=" + encodeURIComponent(first_dose_date) +
+                        "&second_date=" + encodeURIComponent(second_dose_date) + 
+                        "&type=" + encodeURIComponent(type) + 
+                        "&taxcode=" + encodeURIComponent(params["taxcode"]),
+                    function (data) {
+                        $("#first_date_input").val("")
+                        $("#second_date_input").val("")
+                        $("#type_vaccine_input").val("")
+                        showVaccine(params["taxcode"])
+                    })
+        }
 
         showTests(params["taxcode"])
         showVaccine(params["taxcode"])
+        showContacts(params["taxcode"])
+
+
+
 
     });
 </script>

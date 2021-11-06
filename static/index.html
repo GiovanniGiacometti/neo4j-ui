@@ -33,8 +33,6 @@
                 <button class="btn btn-default"id="search_button" type="button">Search</button>
                 <button class="btn btn-default"id="getall_button" type="button">Get all</button>
                 <button class="btn btn-default"id="insertperson_button" type="button">Insert a person</button>
-                
-
             </form>
         </li>
     </ul>
@@ -160,7 +158,7 @@
                             return a.surname > b.surname ? 1 : -1
                         });
                         data.nodes.forEach(function ( person, i){
-                        $("<tr id= '" + person.taxcode + "'><td class='movie' >" + person.taxcode
+                        $("<tr id= '" + person.taxcode + "'><td>" + person.taxcode
                                 + "</td><td>" + person.name
                                 + "</td><td>" + person.surname
                                 + "</td><td>" + person.age
@@ -183,7 +181,7 @@
                             return a.surname > b.surname ? 1 : -1
                         });
                         data.nodes.forEach(function (person){
-                        $("<tr id= '" + person.taxcode + "'><td class='movie'>" + person.taxcode
+                        $("<tr id= '" + person.taxcode + "'><td>" + person.taxcode
                                 + "</td><td>" + person.name
                                 + "</td><td>" + person.surname
                                 + "</td><td>" + person.age
