@@ -23,13 +23,69 @@
     </div>
 </div>
 
+
+
 <div class="row">
             
     <div class="navbar-header col-sm-6 col-md-6">
         <div class="navbar-brand">
-            <p id="person"></p>
+            <h3 id="person"></h3>
         </div>
     </div>
+</div>
+
+<div class="col-sm-6 col-md-6">
+    <ul class="nav navbar-nav">
+        <li>
+            <form role="search" class="navbar-form" id="search">
+                <button class="btn btn-default"id="insertcovidtest_button" type="button">Insert Covid Test</button>
+                <button class="btn btn-default"id="insertvaccine_button" type="button">Insert Vaccine</button>
+            </form>
+        </li>
+    </ul>
+</div>
+
+<div id = "hiddendiv_covidtest" class="col-sm-6 col-md-6">
+    <ul class="nav navbar-nav">
+        <li>
+            <form role="search" class="navbar-form" id="search">
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Date" class="form-control" id="date_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Type" class="form-control" id="type_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Result" class="form-control" id="result_input">
+                </div>
+                
+                <button class="btn btn-default"id="covid_sendtodb_button" type="button">Insert Covid Test</button>
+                
+
+            </form>
+        </li>
+    </ul>
+</div>
+
+<div id = "hiddendiv_vaccine" class="col-sm-6 col-md-6">
+    <ul class="nav navbar-nav">
+        <li>
+            <form role="search" class="navbar-form" id="search">
+                <div class="form-group">
+                    <input type="text" value="" placeholder="First Dose Date" class="form-control" id="first_date_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="First Dose Date" class="form-control" id="second_date_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Type" class="form-control" id="type_input">
+                </div>
+                
+                <button class="btn btn-default"id="sendtodb_button" type="button">Insert Vaccine</button>
+            
+            </form>
+        </li>
+    </ul>
 </div>
 
 <div class="col-sm-6 col-md-6">
@@ -111,6 +167,20 @@
 <script type="text/javascript">
     $(function () {
 
+        $("#hiddendiv_vaccine").hide()
+        $("#hiddendiv_covidtest").hide()
+        
+        
+        $("#covid_sendtodb_button").on("click", function(){
+                createCovidTest()
+            });
+        $("#insertcovidtest_button").on("click", function(){
+                $("#hiddendiv_covidtest").toggle()
+            });
+        $("#insertvaccine_button").on("click", function(){
+                $("#hiddendiv_vaccine").toggle()
+            });
+
         const urlSearchParams = new URLSearchParams(window.location.search);
         params = Object.fromEntries(urlSearchParams.entries())
         p = $("#person").html(params["name"] +" " + params["surname"])
@@ -133,7 +203,6 @@
             $.get("/vaccine?taxcode=" + encodeURIComponent(taxcode),
                     function (data) {
                         const tbody = $("#tbodyvaccine").empty();
-                            console.log(data.nodes)
                         data.nodes.forEach(function (vaccine){
                         s = vaccine.second_dose_date=="None" ? "" : vaccine.second_dose_date
                         $("<tr id= '" + vaccine.id + "'><td class='movie' >" + vaccine.id
@@ -145,6 +214,20 @@
                         ).appendTo(tbody)
                 }, "json");
         })}
+
+        function createCovidTest(){
+            const date = $("#date_input").val()
+            const type = $("#type_input").val()
+            const result = $("#result_input").val()
+            
+            $.get("/create-covid-test?date=" + encodeURIComponent(date) + "&type=" + encodeURIComponent(type) +
+                        "&result=" + encodeURIComponent(result) + "&taxcode=" + encodeURIComponent(params["taxcode"]),
+                    function (data) {
+                            $("#date_input").val()
+                        $("#type_input").val()
+                        $("#result_input").val()
+                        showTests(params["taxcode"])
+                    })}
 
         showTests(params["taxcode"])
         showVaccine(params["taxcode"])
