@@ -1,6 +1,8 @@
 from json import dumps
 from flask import Flask,Response, request
 from neo4j import GraphDatabase, basic_auth
+import string
+import random
 
 app = Flask(__name__)
 
@@ -124,6 +126,67 @@ def get_vaccine():
             print("No second dose")
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
+
+
+@app.route("/create-covid-test")
+def create_covid_test():
+    try:
+
+        d = {
+            "type":request.args.get('type'),
+            "date":request.args.get('date'),
+            "result":request.args.get('result'),
+            "taxcode": request.args.get("taxcode")
+        }
+
+        print(d)
+    except Exception as e:
+        print(e)
+    else:
+        db = get_db()
+
+        res = db.read_transaction(lambda tx: list(tx.run(
+            '''
+                match(n:CovidTest) return n.id as id order by n.id DESC limit 1 
+            ''', )))
+        highest_id = int(res[0]["id"])
+
+        db.write_transaction(lambda tx: list(tx.run(
+            '''
+                MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:TESTED]->(a:CovidTest {id:$id, type:$type, result:$result, date:$date})
+            ''', id=highest_id+1, type = d["type"], result=d["result"], date = d["date"],taxcode = d["taxcode"])))
+
+        
+        return {}
+
+
+
+@app.route("/create")
+def create_node():
+    try:
+
+        d = {
+            "name":request.args.get('name'),
+            "surname":request.args.get('surname'),
+            "age":request.args.get('age'),
+            "address":request.args.get('address'),
+        }
+
+        print(d)
+    except Exception as e:
+        print(e)
+        return list()
+    else:
+        db = get_db()
+
+        db.write_transaction(lambda tx: list(tx.run(
+            '''
+                CREATE (a:Person {taxcode:$taxcode, name:$name, surname:$surname, age:$age, address:$address}) 
+            ''', taxcode = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)),
+                    name = d["name"], surname = d["surname"], age = d["age"],address = d["address"])))
+
+        
+        return {}
 
 if __name__ == '__main__':
     app.run(debug = True)

@@ -32,6 +32,34 @@
                 </div>
                 <button class="btn btn-default"id="search_button" type="button">Search</button>
                 <button class="btn btn-default"id="getall_button" type="button">Get all</button>
+                <button class="btn btn-default"id="insertperson_button" type="button">Insert a person</button>
+                
+
+            </form>
+        </li>
+    </ul>
+</div>
+
+<div id = "hiddendiv" class="col-sm-6 col-md-6">
+    <ul class="nav navbar-nav">
+        <li>
+            <form role="search" class="navbar-form" id="search">
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Name" class="form-control" id="name_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Surname" class="form-control" id="surname_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Address" class="form-control" id="address_input">
+                </div>
+                <div class="form-group">
+                    <input type="text" value="" placeholder="Age" class="form-control" id="age_input">
+                </div>
+                
+                <button class="btn btn-default"id="sendtodb_button" type="button">Insert</button>
+                
+
             </form>
         </li>
     </ul>
@@ -74,6 +102,7 @@
 <script type="text/javascript">
     $(function () {
 
+        $("#hiddendiv").hide()
         function createButtons(name, surname, taxcode){
             
             var input1 = $('<input type="button" value="View detail" class="btn btn-default" id="detail_' + taxcode + '"/>');
@@ -95,6 +124,34 @@
                 showNames();
             });
 
+        $("#insertperson_button").on("click", function(){
+                $("#hiddendiv").toggle()
+            });
+
+        $("#sendtodb_button").on("click", function(){
+                $("#hiddendiv").hide()
+                createNode()
+            });
+
+            
+        function createNode(){
+            const name = $("#name_input").val()
+            const surname = $("#surname_input").val()
+            const age = $("#age_input").val()
+            const address = $("#address_input").val()
+            
+            $.get("/create?name=" + encodeURIComponent(name) + "&surname=" + encodeURIComponent(surname) +
+                        "&age=" + encodeURIComponent(age)+ "&address=" + encodeURIComponent(address),
+                    function (data) {
+                        showNames()
+                        $("#name_input").val("")
+                        $("#surname_input").val("")
+                        $("#age_input").val("")
+                        $("#address_input").val("")
+                    
+                    })}
+        
+
         function showNames() {
             $.get("/graph",
                     function (data) {
@@ -115,7 +172,6 @@
                         createButtons(person.name, person.surname, person.taxcode)
             }, "json");
         })}
-        
         
         function search() {
             const query=$("#search_in").val();
@@ -139,7 +195,6 @@
                     },"json");
             return false;
         })}
-        
         
         showNames()
     })
