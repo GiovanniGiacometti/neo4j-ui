@@ -82,7 +82,6 @@ def get_covid_test():
     except Exception as e:
         print(e)
         return list()
-    print(p)
     db = get_db()
     results = db.read_transaction(lambda tx: list(tx.run(
         '''
@@ -109,7 +108,6 @@ def get_vaccine():
         p = request.args.get('taxcode')
     except Exception as e:
         print(e)
-    print(p)
     db = get_db()
     results = db.read_transaction(lambda tx: list(tx.run(
         '''
@@ -140,8 +138,6 @@ def create_covid_test():
             "result":request.args.get('result'),
             "taxcode": request.args.get("taxcode")
         }
-
-        print(d)
     except Exception as e:
         print(e)
     else:
@@ -170,8 +166,6 @@ def create_vaccine():
             "type":request.args.get('type'),
             "taxcode": request.args.get("taxcode")
         }
-
-        print(d)
     except Exception as e:
         print(e)
     else:
@@ -199,7 +193,6 @@ def get_contacts():
             "taxcode": request.args.get("taxcode")
         }
 
-        print(d)
     except Exception as e:
         print(e)
     else:
@@ -226,7 +219,6 @@ def get_contacts():
                 rel["date"] = str(record["rel_prop"]["date"])
             elif type=="APP_CONTACT":
                 rel["date"] = str(record["rel_prop"]["date"])
-            print(rel)
             relationships.append(rel)
 
             
@@ -243,8 +235,6 @@ def create_person():
             "age":request.args.get('age'),
             "address":request.args.get('address'),
         }
-
-        print(d)
     except Exception as e:
         print(e)
         return list()
