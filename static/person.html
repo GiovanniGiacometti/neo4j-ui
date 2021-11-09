@@ -103,10 +103,10 @@
     <div id = "hiddendiv_vaccine" class="col-sm-6 col-md-6">
         <form role="search" class="navbar-form" id="search">
             <div class="form-group">
-                <input type="text" value="" placeholder="First Dose Date (yyyy-mm-dd)" class="form-control" id="first_date_input">
+                <input type="text" size="25" value="" placeholder="First Dose Date (yyyy-mm-dd)" class="form-control" id="first_date_input">
             </div>
             <div class="form-group">
-                <input type="text" value="" placeholder="Second Dose Date (yyyy-mm-dd)" class="form-control" id="second_date_input">
+                <input type="text" size="25" value="" placeholder="Second Dose Date (yyyy-mm-dd)" class="form-control" id="second_date_input">
             </div>
 
             <div class="form-group">
@@ -159,7 +159,7 @@
                     <input type="text" value="" placeholder="Taxcode" class="form-control" id="taxcode_input">
                 </div>
                 <div class="form-group">
-                    <input type="text" value="" placeholder="Date" class="form-control" id="date_rel_input">
+                    <input size="20" type="text" value="" placeholder="Date (yyyy-mm-dd)" class="form-control" id="date_rel_input">
                 </div>
                 <div class="form-group">
                     <input type="text" value="" placeholder="Place" class="form-control" id="place_rel_input">
@@ -212,6 +212,7 @@
     .row_internal{
         margin:10px
     }
+    
 </style>
 </body>
 </html>
@@ -228,7 +229,7 @@
         
         $("#place_rel_input").hide()
         $("#date_rel_input").hide()
-        //$("#hiddendiv_vaccine").hide()
+        $("#hiddendiv_vaccine").hide()
         $("#hiddendiv_covidtest").hide()
         $("#hiddendiv_relationship").hide()
 

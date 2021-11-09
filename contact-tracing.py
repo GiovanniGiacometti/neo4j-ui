@@ -97,11 +97,9 @@ def get_covid_test():
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
-
 @app.route("/vaccine")
 def get_vaccine():
     print("vaccine called")
-
     try:
         p = request.args.get('taxcode')
     except Exception as e:
