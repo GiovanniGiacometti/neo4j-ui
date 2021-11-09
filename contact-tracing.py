@@ -98,8 +98,6 @@ def get_covid_test():
                     mimetype="application/json")
 
 
-
-
 @app.route("/vaccine")
 def get_vaccine():
     print("vaccine called")
@@ -184,7 +182,6 @@ def create_vaccine():
             id=highest_id+1, type = d["type"], first_date=d["first_date"], second_date = d["second_date"],taxcode = d["taxcode"])))
         return {}
 
-
 @app.route("/contacts")
 def get_contacts():
     try:
@@ -228,7 +225,6 @@ def get_contacts():
 @app.route("/create")
 def create_person():
     try:
-
         d = {
             "name":request.args.get('name'),
             "surname":request.args.get('surname'),
@@ -247,6 +243,57 @@ def create_person():
             ''', taxcode = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)),
                     name = d["name"], surname = d["surname"], age = d["age"],address = d["address"])))
 
+        
+        return {}
+
+
+@app.route("/create-relationship")
+def create_relationship():
+    try:
+
+        d = {
+            "first_taxcode":request.args.get('first_taxcode'),
+            "second_taxcode":request.args.get('second_taxcode'),
+            "type":request.args.get('type')
+        }
+    except Exception as e:
+        print(e)
+        return list()
+    else:
+        db = get_db()
+
+
+        if d["type"] == "family":
+            db.write_transaction(lambda tx: tx.run(
+                '''
+                    MATCH
+                        (firstPerson:Person {taxcode:$first_taxcode}),
+                        (secondPerson:Person {taxcode:$second_taxcode})
+                    CREATE 
+                        (firstPerson)-[r:FAMILY_CONTACT]->(secondPerson)
+                ''',first_taxcode = d["first_taxcode"],second_taxcode = d["second_taxcode"] ))
+
+        elif d["type"] == "app":
+            db.write_transaction(lambda tx: tx.run(
+                '''
+                    MATCH
+                        (firstPerson:Person {taxcode:$first_taxcode}),
+                        (secondPerson:Person {taxcode:$second_taxcode})
+                    CREATE 
+                        (firstPerson)-[r:APP_CONTACT {date:date($date)}]->(secondPerson)
+                ''', first_taxcode = d["first_taxcode"],second_taxcode = d["second_taxcode"],
+                    date = request.args.get('date')))
+        elif d["type"] == "event":
+            print("event")
+            db.write_transaction(lambda tx: tx.run(
+                '''
+                    MATCH
+                        (firstPerson:Person {taxcode:$first_taxcode}),
+                        (secondPerson:Person {taxcode:$second_taxcode})
+                    CREATE 
+                        (firstPerson)-[r:EVENT_CONTACT {date:date($date), place:$place}]->(secondPerson)
+                ''', first_taxcode = d["first_taxcode"],second_taxcode = d["second_taxcode"],
+                    date = request.args.get('date'), place = request.args.get('place') ))
         
         return {}
 

@@ -141,6 +141,7 @@ select {
 }
 button,
 html input[type="button"],
+html input[type="select"],
 input[type="reset"],
 input[type="submit"] {
   -webkit-appearance: button;
@@ -148,11 +149,13 @@ input[type="submit"] {
 }
 
 input[type="checkbox"],
+input[type="select"],
 input[type="radio"] {
   box-sizing: border-box;
   padding: 0;
 }
-input[type="search"] {
+input[type="search"],
+input[type="select"] {
   -webkit-appearance: textfield;
   -moz-box-sizing: content-box;
   -webkit-box-sizing: content-box;
@@ -1024,13 +1027,14 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
 }
-input[type="search"] {
+input[type="search"].input[type="select"] {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 input[type="radio"],
-input[type="checkbox"] {
+input[type="checkbox"],
+input[type="select"] {
   margin: 4px 0 0;
   margin-top: 1px \9;
   /* IE8-9 */
@@ -1051,7 +1055,8 @@ select optgroup {
 }
 input[type="file"]:focus,
 input[type="radio"]:focus,
-input[type="checkbox"]:focus {
+input[type="checkbox"]:focus,
+input[type="select"]:focus {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
@@ -3193,6 +3198,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
     padding-left: 0;
   }
   .navbar-form .radio input[type="radio"],
+  .navbar-form .checkbox input[type="select"],
   .navbar-form .checkbox input[type="checkbox"] {
     float: none;
     margin-left: 0;

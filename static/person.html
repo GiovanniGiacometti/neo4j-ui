@@ -30,9 +30,41 @@
     <div class="navbar-header col-sm-6 col-md-6">
         <div class="navbar-brand">
             <h3 id="person"></h3>
+            <ul class="nav navbar-nav">
+                <li>
+                    <form role="search" class="navbar-form">
+                        <button class="btn btn-default"id="insertrelationship_button" type="button">Insert Relationship</button>
+                    </form>
+                </li>
+            </ul>
+            <div id = "hiddendiv_relationship" class="col-sm-6 col-md-6">
+                <form role="search" class="navbar-form">
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Taxcode" class="form-control" id="taxcode_input">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Date" class="form-control" id="date_rel_input">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Place" class="form-control" id="place_rel_input">
+                    </div>
+                    <div class="form-group">
+                        <select placeholder="Type" class="form-control" id="type_select">
+                                <option value="family">Family contact</option>
+                                <option value="event">Event contact</option>
+                                <option value="app">App contact</option>
+                        </select>
+                    </div>
+                    
+                    
+                    <button class="btn btn-default"id="relationship_sendtodb_button" type="button">Insert Relationship</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+
 
 
 
@@ -43,6 +75,8 @@
             <li>
                 <form role="search" class="navbar-form" id="search">
                     <button class="btn btn-default"id="insertcovidtest_button" type="button">Insert Covid Test</button>
+                    
+                
                 </form>
             </li>
         </ul>
@@ -188,8 +222,21 @@
 <script type="text/javascript">
     $(function () {
 
+
+        
+        $("#place_rel_input").hide()
+        $("#date_rel_input").hide()
         $("#hiddendiv_vaccine").hide()
         $("#hiddendiv_covidtest").hide()
+        $("#hiddendiv_relationship").hide()
+
+        $("#insertrelationship_button").on("click", function(){
+                $("#hiddendiv_relationship").toggle()
+            });
+        
+        $("#relationship_sendtodb_button").on("click", function(){
+                createRelationship()
+            });
         
         $("#vaccine_sendtodb_button").on("click", function(){
                 createVaccine()
@@ -202,6 +249,22 @@
             });
         $("#insertvaccine_button").on("click", function(){
                 $("#hiddendiv_vaccine").toggle()
+            });
+
+        $('#type_select').on('change', function() {
+                new_value = this.value
+                if (new_value == "app"){
+                    $("#date_rel_input").show()
+                    $("#place_rel_input").hide() 
+                }
+                else if (new_value == "event"){
+                    $("#date_rel_input").show()
+                    $("#place_rel_input").show()
+                }
+                else{
+                    $("#date_rel_input").hide()
+                    $("#place_rel_input").hide() 
+                }
             });
 
         const urlSearchParams = new URLSearchParams(window.location.search);
@@ -285,6 +348,32 @@
                         $("#second_date_input").val("")
                         $("#type_vaccine_input").val("")
                         showVaccine(params["taxcode"])
+                    })
+        }
+
+        function createRelationship(){
+            const type = $( "#type_select" ).val();
+            const inserted_taxcode = $("#taxcode_input").val()
+            endpoint = "/create-relationship?first_taxcode=" + encodeURIComponent(params["taxcode"]) +
+                        "&second_taxcode=" + encodeURIComponent(inserted_taxcode) + 
+                        "&type=" + encodeURIComponent(type)
+            
+            if (type == "app"){
+                const inserted_date = $("#date_rel_input").val()
+                endpoint += "&date=" + encodeURIComponent(inserted_date)
+            }
+            else if (type == "event"){
+                const inserted_date = $("#date_rel_input").val()
+                const inserted_place = $("#place_rel_input").val()
+                endpoint += "&date=" + encodeURIComponent(inserted_date) + 
+                            "&place=" + encodeURIComponent(inserted_place)
+            }
+            $.get(endpoint,
+                    function (data) {
+                        $("#taxcode_input").val("")
+                        $("#date_event_input").val("")
+                        $("#date_event_input").val("")
+                        showContacts(params["taxcode"])
                     })
         }
 
