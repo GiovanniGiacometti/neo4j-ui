@@ -157,13 +157,13 @@ def create_covid_test():
 @app.route("/create-vaccine")
 def create_vaccine():
     try:
-
+        
         d = {
             "first_date":request.args.get('first_date'),
-            "second_date":request.args.get('second_date'),
             "type":request.args.get('type'),
             "taxcode": request.args.get("taxcode")
         }
+        print(d)
     except Exception as e:
         print(e)
     else:
@@ -174,12 +174,24 @@ def create_vaccine():
             ''', )))
         highest_id = int(res[0]["id"])
 
-        db.write_transaction(lambda tx: list(tx.run(
-            '''
-                MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:VACCINATED]->   
-                (a:VaccineCertificate {id:$id, type:$type, first_dose_date:date($first_date), second_dose_date:date($second_date)})
-            ''', 
-            id=highest_id+1, type = d["type"], first_date=d["first_date"], second_date = d["second_date"],taxcode = d["taxcode"])))
+        if d["type"] != "Johnson&Johnson":
+            db.write_transaction(lambda tx: list(tx.run(
+                '''
+                    MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:VACCINATED]->   
+                    (a:VaccineCertificate {id:$id, type:$type, first_dose_date:date($first_date), second_dose_date:date($second_date)})
+                ''', 
+                id=highest_id+1, type = d["type"], first_date=d["first_date"], second_date = request.args.get('second_date'),taxcode = d["taxcode"])))
+        else:
+
+            db.write_transaction(lambda tx: list(tx.run(
+                '''
+                    MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:VACCINATED]->   
+                    (a:VaccineCertificate {id:$id, type:$type, first_dose_date:date($first_date)})
+                ''', 
+                id=highest_id+1, type = d["type"], first_date=d["first_date"],taxcode = d["taxcode"])))
+       
+
+        
         return {}
 
 @app.route("/contacts")
@@ -245,7 +257,6 @@ def create_person():
 
         
         return {}
-
 
 @app.route("/create-relationship")
 def create_relationship():
