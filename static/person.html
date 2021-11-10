@@ -224,9 +224,11 @@
 <script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
-
-
         
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        params = Object.fromEntries(urlSearchParams.entries())
+        p = $("#person").html(params["name"] +" " + params["surname"])
+
         $("#place_rel_input").hide()
         $("#date_rel_input").hide()
         $("#hiddendiv_vaccine").hide()
@@ -270,7 +272,7 @@
                 }
             });
 
-            $('#type_vaccine_select').on('change', function() {
+        $('#type_vaccine_select').on('change', function() {
                 new_value = this.value
                 if (new_value == "Johnson&Johnson"){
                     $("#second_date_input").hide()
@@ -280,23 +282,46 @@
                 }
             });
 
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        params = Object.fromEntries(urlSearchParams.entries())
-        p = $("#person").html(params["name"] +" " + params["surname"])
         
-        function showTests(taxcode) {
-            $.get("/covid-test?taxcode=" + encodeURIComponent(taxcode),
+        
+
+        function createButtons(id, what){
+            
+            var input = $('<input type="button" value="Delete" class="btn btn-default" id="delete_' + what+ id + '"/>');
+
+            input.appendTo($("#" + what + id));
+            
+            input.on("click", function(){
+                if(what == "covidtest_")
+                    deleteCovidTest(id)
+                else if(what=="vaccine_")
+                    deleteVaccine(id)
+                else 
+                    deleteContacts(id)
+            });
+        }
+
+        function deleteContacts(taxcode2){
+            
+            $.get("/delete-contact?taxcode1=" + encodeURIComponent(params["taxcode"]) +"&taxcode2=" + encodeURIComponent(taxcode2),
                     function (data) {
-                        const tbody = $("#tbodytest").empty();
-                        data.nodes.forEach(function ( covidTest){
-                        $("<tr id= '" + covidTest.id + "'><td>" + covidTest.id
-                                + "</td><td>" + covidTest.date
-                                + "</td><td>" + covidTest.type
-                                + "</td><td>" + covidTest.result
-                                + "</td></tr>"
-                        ).appendTo(tbody)
-                }, "json");
-        })}
+                        showContacts(params["taxcode"])
+                    })
+        }
+        
+        function deleteVaccine(id){
+            $.get("/delete-vaccine?id=" + encodeURIComponent(id),
+                    function (data) {
+                        showVaccine(params["taxcode"])
+                    })
+        }
+
+        function deleteCovidTest(id){
+            $.get("/delete-covidtest?id=" + encodeURIComponent(id),
+                    function (data) {
+                        showTests(params["taxcode"])
+                    })
+        }
 
         function showVaccine(taxcode) {
             $.get("/vaccine?taxcode=" + encodeURIComponent(taxcode),
@@ -304,12 +329,14 @@
                         const tbody = $("#tbodyvaccine").empty();
                         data.nodes.forEach(function (vaccine){
                         s = vaccine.second_dose_date=="None" ? "" : vaccine.second_dose_date
-                        $("<tr id= '" + vaccine.id + "'><td>" + vaccine.id
+                        $("<tr id= 'vaccine_" + vaccine.id + "'><td>" + vaccine.id
                             + "</td><td>" + vaccine.type
                             + "</td><td>" + vaccine.first_dose_date
                             + "</td><td>" + s
                             + "</td></tr>"
                         ).appendTo(tbody)
+
+                        createButtons(vaccine.id,"vaccine_")
                 }, "json");
         })}
 
@@ -321,7 +348,7 @@
                         date = rel.hasOwnProperty("date") ? rel.date : "" 
                         place = rel.hasOwnProperty("place") ? rel.place : ""
 
-                        $("<tr id= '" + rel.taxcode + "'><td>" 
+                        $("<tr id= 'contacts_" + rel.taxcode + "'><td>" 
                                               + rel.person_name
                                 + "</td><td>" + rel.person_surname
                                 + "</td><td>" + rel.rel_type
@@ -329,9 +356,27 @@
                                 + "</td><td>" + place
                                 + "</td></tr>"
                         ).appendTo(tbody)
+
+                        createButtons(rel.taxcode,"contacts_")
                 }, "json");
         })}
 
+        function showTests(taxcode) {
+            $.get("/covid-test?taxcode=" + encodeURIComponent(taxcode),
+                    function (data) {
+                        const tbody = $("#tbodytest").empty();
+                        data.nodes.forEach(function ( covidTest){
+                        $("<tr id= 'covidtest_" + covidTest.id + "'><td>" + covidTest.id
+                                + "</td><td>" + covidTest.date
+                                + "</td><td>" + covidTest.type
+                                + "</td><td>" + covidTest.result
+                                + "</td></tr>"
+                        ).appendTo(tbody)
+
+                        createButtons(covidTest.id,"covidtest_")
+                }, "json");
+        })}
+        
         function createCovidTest(){
             const date = $("#date_input").val()
             const type = $("#type_input").val()

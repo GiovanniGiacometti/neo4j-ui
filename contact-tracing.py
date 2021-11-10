@@ -217,6 +217,7 @@ def get_contacts():
             rel = {}
             rel["person_name"] = record["p"]["name"]
             rel["person_surname"] = record["p"]["surname"]
+            rel["taxcode"] = record["p"]["taxcode"]
 
             type = record["rel_type"]
             rel["rel_type"] = type
@@ -305,6 +306,77 @@ def create_relationship():
                     date = request.args.get('date'), place = request.args.get('place') ))
         
         return {}
+
+@app.route('/delete-person')
+def delete_person():
+    try:
+        taxcode = request.args.get('taxcode')
+    except Exception as e:
+        print(e)
+        return list()
+
+    db = get_db()
+    db.write_transaction(lambda tx: tx.run(
+            '''
+                MATCH(personToDelete:Person {taxcode:$taxcode}) DETACH DELETE personToDelete 
+            ''', taxcode = taxcode))
+
+    return {}
+
+@app.route('/delete-covidtest')
+def delete_covidtest():
+    try:
+        id = request.args.get('id')
+        print(id)
+    except Exception as e:
+        print(e)
+        return list()
+
+    db = get_db()
+    db.write_transaction(lambda tx: tx.run(
+            '''
+                MATCH(ct:CovidTest {id:$id}) DETACH DELETE ct 
+            ''', id = int(id)))
+
+    return {}
+
+@app.route('/delete-vaccine')
+def delete_vaccine():
+    try:
+        id = request.args.get('id')
+        print(id)
+    except Exception as e:
+        print(e)
+        return list()
+
+    db = get_db()
+    db.write_transaction(lambda tx: tx.run(
+            '''
+                MATCH(vc:VaccineCertificate {id:$id}) DETACH DELETE vc
+            ''', id = int(id)))
+
+    return {}
+
+
+@app.route('/delete-contact')
+def delete_relationship():
+    try:
+        taxcode1 = request.args.get('taxcode1')
+        taxcode2 = request.args.get('taxcode2')
+        print(id)
+    except Exception as e:
+        print(e)
+        return list()
+
+    db = get_db()
+    db.write_transaction(lambda tx: tx.run(
+            '''
+                MATCH(n:Person {taxcode:$taxcode1})-[r]-(p:Person {taxcode:$taxcode2}) delete r
+            ''', taxcode1 = taxcode1, taxcode2 = taxcode2))
+
+    return {}
+
+
 
 if __name__ == '__main__':
     app.run(debug = True)

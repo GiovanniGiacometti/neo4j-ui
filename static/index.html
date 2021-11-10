@@ -106,15 +106,18 @@
         function createButtons(name, surname, taxcode){
             
             var input1 = $('<input type="button" value="View detail" class="btn btn-default" id="detail_' + taxcode + '"/>');
-            
+            var input2 = $('<input type="button" value="Delete person" class="btn btn-default" id="delete_' + taxcode + '"/>');
+
             input1.appendTo($("#" + taxcode));
+            input2.appendTo($("#" + taxcode));
             
 
             input1.on("click", function(){
                 window.open("person?name=" + name + "&surname=" + surname + "&taxcode=" + taxcode, '_self')
             });
-
-            
+            input2.on("click", function(){
+                deletePerson(taxcode)
+            }); 
         }
 
         $("#search_button").on("click", function(){
@@ -132,7 +135,14 @@
                 $("#hiddendiv").hide()
                 createNode()
             });
+        
 
+        function deletePerson(taxcode){
+            $.get("/delete-person?taxcode=" + encodeURIComponent(taxcode),
+                    function (data) {
+                        showNames()
+                    })
+        }
             
         function createNode(){
             const name = $("#name_input").val()
