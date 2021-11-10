@@ -103,6 +103,24 @@
     $(function () {
 
         $("#hiddendiv").hide()
+        
+        $("#search_button").on("click", function(){
+                search();
+            });
+        
+        $("#getall_button").on("click", function(){
+                showNames();
+            });
+
+        $("#insertperson_button").on("click", function(){
+                $("#hiddendiv").toggle()
+            });
+
+        $("#sendtodb_button").on("click", function(){
+                $("#hiddendiv").hide()
+                createNode()
+            });
+        
         function createButtons(name, surname, taxcode){
             
             var input1 = $('<input type="button" value="View detail" class="btn btn-default" id="detail_' + taxcode + '"/>');
@@ -119,24 +137,7 @@
                 deletePerson(taxcode)
             }); 
         }
-
-        $("#search_button").on("click", function(){
-                search();
-            });
-        $("#getall_button").on("click", function(){
-                showNames();
-            });
-
-        $("#insertperson_button").on("click", function(){
-                $("#hiddendiv").toggle()
-            });
-
-        $("#sendtodb_button").on("click", function(){
-                $("#hiddendiv").hide()
-                createNode()
-            });
         
-
         function deletePerson(taxcode){
             $.get("/delete-person?taxcode=" + encodeURIComponent(taxcode),
                     function (data) {
@@ -161,7 +162,6 @@
                     
                     })}
         
-
         function showNames() {
             $.get("/graph",
                     function (data) {

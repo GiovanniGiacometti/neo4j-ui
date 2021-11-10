@@ -246,12 +246,15 @@
         $("#vaccine_sendtodb_button").on("click", function(){
                 createVaccine()
             });
+
         $("#covid_sendtodb_button").on("click", function(){
                 createCovidTest()
             });
+
         $("#insertcovidtest_button").on("click", function(){
                 $("#hiddendiv_covidtest").toggle()
             });
+        
         $("#insertvaccine_button").on("click", function(){
                 $("#hiddendiv_vaccine").toggle()
             });
@@ -281,9 +284,6 @@
                     $("#second_date_input").show() 
                 }
             });
-
-        
-        
 
         function createButtons(id, what){
             

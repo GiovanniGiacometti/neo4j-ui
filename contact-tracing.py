@@ -357,7 +357,6 @@ def delete_vaccine():
 
     return {}
 
-
 @app.route('/delete-contact')
 def delete_relationship():
     try:
@@ -376,7 +375,5 @@ def delete_relationship():
 
     return {}
 
-
-
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run()
