@@ -31,7 +31,7 @@
                     <input type="text" value="" placeholder="Search for Person" class="form-control" id="search_in">
                 </div>
                 <button class="btn btn-default"id="search_button" type="button">Search</button>
-                <button class="btn btn-default"id="getall_button" type="button">Get all</button>
+                <button class="btn btn-default"id="getall_button" type="button">Get all people</button>
                 <button class="btn btn-default"id="insertperson_button" type="button">Insert a person</button>
                 
             </form>
@@ -103,7 +103,7 @@
     $(function () {
 
         $("#hiddendiv").hide()
-        
+        $("#getall_button").hide()
         $("#search_button").on("click", function(){
                 search();
             });
@@ -163,6 +163,7 @@
                     })}
         
         function showNames() {
+            $("#getall_button").hide()
             $.get("/graph",
                     function (data) {
                         const tbody = $("#tbody").empty();
@@ -184,6 +185,7 @@
         })}
         
         function search() {
+            $("#getall_button").show()
             const query=$("#search_in").val();
             $.get("/search?person=" + encodeURIComponent(query),
                     function (data) {
