@@ -35,7 +35,9 @@ def get_graph():
     for record in results:
         nodes.append({"name": record["name"], "surname": record["surname"],
         "address": record["address"],"age": record["age"], "taxcode":record["taxcode"]})
-        
+    
+
+    db.close()
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
@@ -70,7 +72,7 @@ def get_search():
             nodes.append({"name": record["name"], "surname": record["surname"],
                 "address": record["address"],"age": record["age"], "taxcode":record["taxcode"]})
         
-        
+        db.close()
         return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
@@ -93,7 +95,7 @@ def get_covid_test():
     for record in results:
         nodes.append({"id": record["id"], "date": str(record["date"]),
         "type": record["type"],"result": record["result"]})
-        
+    db.close()    
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
@@ -121,6 +123,8 @@ def get_vaccine():
             nodes[i]["second_dose_date"] = str(record["second_dose_date"])
         except:
             print("No second dose")
+
+    db.close()
     return Response(dumps({"nodes": nodes}),
                     mimetype="application/json")
 
@@ -150,6 +154,7 @@ def create_covid_test():
                 MATCH(n:Person{taxcode:$taxcode}) CREATE (n)-[r:TESTED]->(a:CovidTest {id:$id, type:$type, result:$result, date:date($date)})
             ''', 
             id=highest_id+1, type = d["type"], result=d["result"], date = d["date"],taxcode = d["taxcode"])))
+        db.close()
         return {}
 
 @app.route("/create-vaccine")
@@ -189,7 +194,7 @@ def create_vaccine():
                 id=highest_id+1, type = d["type"], first_date=d["first_date"],taxcode = d["taxcode"])))
        
 
-        
+        db.close()
         return {}
 
 @app.route("/contacts")
@@ -229,7 +234,7 @@ def get_contacts():
                 rel["date"] = str(record["rel_prop"]["date"])
             relationships.append(rel)
 
-            
+        db.close()    
         return Response(dumps({"relationships": relationships}),
                     mimetype="application/json")
 
@@ -254,7 +259,7 @@ def create_person():
             ''', taxcode = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(16)),
                     name = d["name"], surname = d["surname"], age = d["age"],address = d["address"])))
 
-        
+        db.close()
         return {}
 
 @app.route("/create-relationship")
@@ -304,7 +309,7 @@ def create_relationship():
                         (firstPerson)-[r:EVENT_CONTACT {date:date($date), place:$place}]->(secondPerson)
                 ''', first_taxcode = d["first_taxcode"],second_taxcode = d["second_taxcode"],
                     date = request.args.get('date'), place = request.args.get('place') ))
-        
+        db.close()
         return {}
 
 @app.route('/delete-person')
@@ -320,7 +325,7 @@ def delete_person():
             '''
                 MATCH(personToDelete:Person {taxcode:$taxcode}) DETACH DELETE personToDelete 
             ''', taxcode = taxcode))
-
+    db.close()
     return {}
 
 @app.route('/delete-covidtest')
@@ -337,7 +342,7 @@ def delete_covidtest():
             '''
                 MATCH(ct:CovidTest {id:$id}) DETACH DELETE ct 
             ''', id = int(id)))
-
+    db.close()
     return {}
 
 @app.route('/delete-vaccine')
@@ -354,7 +359,7 @@ def delete_vaccine():
             '''
                 MATCH(vc:VaccineCertificate {id:$id}) DETACH DELETE vc
             ''', id = int(id)))
-
+    db.close()
     return {}
 
 @app.route('/delete-contact')
@@ -372,7 +377,7 @@ def delete_relationship():
             '''
                 MATCH(n:Person {taxcode:$taxcode1})-[r]-(p:Person {taxcode:$taxcode2}) delete r
             ''', taxcode1 = taxcode1, taxcode2 = taxcode2))
-
+    db.close()
     return {}
 
 if __name__ == '__main__':
