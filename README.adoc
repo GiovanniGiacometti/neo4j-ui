@@ -1,2 +1,2 @@
-SMBUD PROJECT - GROUP 13
+Simple web application to visualize data stored in a Neo4j database. 
 
